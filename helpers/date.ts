@@ -1,5 +1,91 @@
 import { AffectableIndices, MergedTimeBar, SelectedDate, SurroundingDates, ViolatedRange} from "../dataFormat/DataFormat";
 
+const dayjs = require('dayjs');
+
+export function dateToYmd(date: Date): string {
+    return dayjs(date).format('YYYYMMDD')
+}
+
+export function getDatesInRange(
+    inputDate: string,
+    dateRange: number
+): string[] {
+    // Parse the input date string
+    const year = parseInt(inputDate.substring(0, 4), 10);
+    const month = parseInt(inputDate.substring(4, 6), 10) - 1; // Months are 0-based in JavaScript Date
+    const day = parseInt(inputDate.substring(6, 8), 10);
+
+    const date = new Date(year, month, day);
+
+    const dates: string[] = [dateToYmd(date)]
+
+    for (let i = 1; i <= dateRange; ++i) {
+        let d1 = new Date(date)
+        d1.setDate(date.getDate() - i)
+        dates.push(dateToYmd(d1))
+
+        let d2 = new Date(date)
+        d2.setDate(date.getDate() + i)
+        dates.push(dateToYmd(d2))
+    }
+
+    return dates.sort()
+}
+
+export function getPreviousAndNextDay(
+    inputDate: string
+): { previousDay: string, nextDay: string } {
+    // Parse the input date string
+    const year = parseInt(inputDate.substring(0, 4), 10);
+    const month = parseInt(inputDate.substring(4, 6), 10) - 1; // Months are 0-based in JavaScript Date
+    const day = parseInt(inputDate.substring(6, 8), 10);
+
+    var date = new Date(year, month, day);
+
+    const previousDate = new Date(date);
+    previousDate.setDate(date.getDate() - 1);
+
+    const nextDate = new Date(date);
+    nextDate.setDate(date.getDate() + 1);
+
+    // Format the dates back to yyyymmdd
+    const formatDate = (date: Date): string => {
+        const y = date.getFullYear();
+        const m = (date.getMonth() + 1).toString().padStart(2, '0');
+        const d = date.getDate().toString().padStart(2, '0');
+        return `${y}${m}${d}`;
+    };
+
+    return {
+        previousDay: formatDate(previousDate),
+        nextDay: formatDate(nextDate)
+    };
+}
+
+export const isRestHoursSmallerThan = (
+    hour: number,
+    workRecord: String
+): boolean => {
+    const totalRestBlocks = workRecord.replace(/1/g, '')
+    return totalRestBlocks.length < hour * 2
+}
+
+export function replaceWith2(
+    workRecord: string,
+    start: number,
+    end: number
+): string {
+
+    if (start < 0 || end > workRecord.length || start >= end) {
+        throw new Error("Invalid range");
+    }
+
+    const beforeRange = workRecord.slice(0, start);
+    const afterRange = workRecord.slice(end);
+
+    return beforeRange + "2".repeat(end - start) + afterRange;
+}
+
 export function getSurroundingDates(targetDate: string, dates: string[] , getSize: number): SurroundingDates{
     if(dates.indexOf(targetDate) === -1) dates.push(targetDate);
     

@@ -1,16 +1,16 @@
 import { SelectedDate, WorkRecord } from "./dataFormat/DataFormat";
-import { getI02Validation, getI07Validation, getI06Validation, getI01Validation } from "./ruleValidation/IMO/IMO";
+import { getI02Validation, getI07Validation, getI06Validation, getI01Validation, getI04Validation, getI05Validation } from "./ruleValidation/IMO/IMO";
 
-interface RuleDetail{
-    ruleNumber: string;
-    timeBar: string;
-}
+// interface RuleDetail{
+//     ruleNumber: string;
+//     timeBar: string;
+// }
 
-interface Rule{
-    I: string[];
-    K: string[];
-    L: string[];
-}
+// interface Rule{
+//     I: string[];
+//     K: string[];
+//     L: string[];
+// }
 
 const sD: SelectedDate = {
     selectedDate : "20240103",
@@ -38,24 +38,28 @@ const wrks : WorkRecord[] = [
     }
 ];
 
-console.log("I07\n", getI07Validation(sD, wrks));
-console.log("I02\n", getI02Validation(sD, wrks));
-console.log("I06\n", getI06Validation(sD, wrks));
 console.log("I01\n", getI01Validation(sD, wrks));
+console.log("I02\n", getI02Validation(sD, wrks));
 
-const iMORuleDetail: RuleDetail[] = [
-    {
-        ruleNumber: "07",
-        timeBar: getI07Validation(sD, wrks)
-    },
-    {
-        ruleNumber: "02",
-        timeBar: getI02Validation(sD, wrks)
-    }
-]
+console.log("I04\n", getI04Validation(sD, wrks));
+console.log("I05\n", getI05Validation(sD, wrks));
+console.log("I06\n", getI06Validation(sD, wrks));
+console.log("I07\n", getI07Validation(sD, wrks));
 
-const overallRule : Rule = {
-    I: iMORuleDetail.map(e => e.ruleNumber),
-    K: null,
-    L: null,
-}
+
+// const iMORuleDetail: RuleDetail[] = [
+//     {
+//         ruleNumber: "07",
+//         timeBar: getI07Validation(sD, wrks)
+//     },
+//     {
+//         ruleNumber: "02",
+//         timeBar: getI02Validation(sD, wrks)
+//     }
+// ]
+
+// const overallRule : Rule = {
+//     I: iMORuleDetail.map(e => e.ruleNumber),
+//     K: null,
+//     L: null,
+// }
