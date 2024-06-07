@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var IMO_1 = require("./ruleValidation/IMO/IMO");
 var sD = {
     selectedDate: "20240103",
-    timeBar: "000000000000001111111111111111111111111111110000",
+    timeBar: "0101010101010101010101010101010101010101010101010101",
     startIndex: 14,
     endIndex: 47
 };
@@ -25,7 +25,8 @@ var wrks = [
         workRecordValue: '000000000000001111111111001111111111110011110000'
     }
 ];
-// console.log(getI07Validation(sD, wrks));
-//console.log(getI02Validation(sD, wrks));
-console.log((0, IMO_1.getI06Validation)(sD, wrks));
+console.log("I07\n", (0, IMO_1.getI07Validation)(sD, wrks));
+console.log("I02\n", (0, IMO_1.getI02Validation)(sD, wrks));
+console.log("I06\n", (0, IMO_1.getI06Validation)(sD, wrks));
+console.log("I01\n", (0, IMO_1.getI01Validation)(sD, wrks));
 //# sourceMappingURL=main.js.map
