@@ -1,5 +1,5 @@
 import { SelectedDate, WorkRecord } from "./dataFormat/DataFormat";
-import { getI02Validation, getI07Validation } from "./ruleValidation/IMO/IMO";
+import { getI02Validation, getI07Validation, getI06Validation } from "./ruleValidation/IMO/IMO";
 
 
 const sD: SelectedDate = {
@@ -29,4 +29,5 @@ const wrks : WorkRecord[] = [
 ];
 
 // console.log(getI07Validation(sD, wrks));
-console.log(getI02Validation(sD, wrks));
+//console.log(getI02Validation(sD, wrks));
+console.log(getI06Validation(sD, wrks));
