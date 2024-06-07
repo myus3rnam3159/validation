@@ -25,6 +25,6 @@ var wrks = [
         workRecordValue: '000000000000001111111111001111111111110011110000'
     }
 ];
-(0, IMO_1.getI07Validation)(sD, wrks);
-console.log((0, IMO_1.getI07Validation)(sD, wrks));
+// console.log(getI07Validation(sD, wrks));
+console.log((0, IMO_1.getI02Validation)(sD, wrks));
 //# sourceMappingURL=main.js.map
