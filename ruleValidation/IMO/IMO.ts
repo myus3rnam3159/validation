@@ -110,7 +110,7 @@ export function getI06Validation(selectedDate: SelectedDate, workRecords: WorkRe
             const subEndI: number = i + 48 - 1;
             const subS: string = mergeTB.value.slice(i, subEndI + 1);
 
-            if(subS.match(^(?:[^0]*0{1,}[^0]*0{12,}[^0]*|[^0]*0{12,}[^0]*0{1,}[^0]*)$/g) === null){
+            if(subS.match(/^(?:[^0]*0{1,}[^0]*0{12,}[^0]*|[^0]*0{12,}[^0]*0{1,}[^0]*)$/g) === null){
                 violatedRange.start = i;
                 violatedRange.end = subEndI;
                 break;
