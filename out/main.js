@@ -29,4 +29,19 @@ console.log("I07\n", (0, IMO_1.getI07Validation)(sD, wrks));
 console.log("I02\n", (0, IMO_1.getI02Validation)(sD, wrks));
 console.log("I06\n", (0, IMO_1.getI06Validation)(sD, wrks));
 console.log("I01\n", (0, IMO_1.getI01Validation)(sD, wrks));
+// const iMORuleDetail: RuleDetail[] = [
+//     {
+//         ruleNumber: "07",
+//         timeBar: getI07Validation(sD, wrks)
+//     },
+//     {
+//         ruleNumber: "02",
+//         timeBar: getI02Validation(sD, wrks)
+//     }
+// ]
+// const overallRule : Rule = {
+//     I: iMORuleDetail.map(e => e.ruleNumber),
+//     K: null,
+//     L: null,
+// }
 //# sourceMappingURL=main.js.map

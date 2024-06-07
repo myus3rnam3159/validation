@@ -3,13 +3,13 @@ import { getI02Validation, getI07Validation, getI06Validation, getI01Validation 
 
 interface RuleDetail{
     ruleNumber: string;
-    timeBar: string;
+    timeBar: string | null;
 }
 
 interface Rule{
-    I: string[];
-    K: string[];
-    L: string[];
+    I: string[] |null;
+    K: string[] |null;
+    L: string[] |null;
 }
 
 const sD: SelectedDate = {
