@@ -120,6 +120,8 @@ export function mergeTimeBars(sd: SelectedDate, leftTB: string, rightTB: string)
         startSelIdx: sd.startIndex + leftTB.length,
         endSelIdx: sd.endIndex + leftTB.length,
         value: leftTB + sd.timeBar + rightTB,
+        recutStart: leftTB.length,
+        recutEnd: leftTB.length + sd.timeBar.length - 1
     }
 }
 

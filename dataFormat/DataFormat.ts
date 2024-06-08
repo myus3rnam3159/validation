@@ -8,6 +8,8 @@ export interface MergedTimeBar {
     startSelIdx: number;
     endSelIdx: number;
     value: string;
+    recutStart: number;
+    recutEnd: number;
 }
 export interface SurroundingDates {
     prevDates: string[];
