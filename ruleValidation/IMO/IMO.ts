@@ -202,24 +202,17 @@ export function getI05Validation(
     selectedDate: string;
     timeBar: string;
     startIndex: number; // start position of work
-    endIndex: number; // end position of workDate
+    endIndex: number; // end position of input workdate (this index will be ignored when cutting)
   },
   workRecords: WorkRecord[] // max length = 15
 ): string | null {
   const block24h = 48;
   const block1w = 336; // 336 = 48 * 7
   const restHoursInWeek = 77;
-  const totalInputBlocks = input.endIndex - input.startIndex + 1;
 
   var combinedRecord = "";
 
-  if (totalInputBlocks <= 0) {
-    throw Error("start block must smaller than end block");
-  }
-
   let dates = getDatesInRange(input.selectedDate, 7);
-
-  // console.log(dates)
 
   for (let date of dates) {
     let dateIndex = workRecords.findIndex((it) => it.workDate === date);
@@ -234,33 +227,16 @@ export function getI05Validation(
     combinedRecord += workRecords[dateIndex].workRecordValue;
   }
 
-  // console.log(combinedRecord)
+  var startOfLoop = input.startIndex + 1;
+  var endOfLoop = input.endIndex + block1w - 1;
 
-  var start = input.startIndex;
-  var end = combinedRecord.length - block1w - totalInputBlocks;
+  console.log(startOfLoop, endOfLoop)
 
-  if (start < 0) {
-    start = 0;
-  }
-  if (end >= combinedRecord.length) {
-    end = combinedRecord.length;
-  }
-
-  // console.log(start, end)
-  // console.log(combinedRecord)
-
-  for (let i = start; i < end; ++i) {
-    // console.log(i, i + block1w)
+  for (let i = startOfLoop; i <= endOfLoop; ++i) {
     let cutWorkRecord = combinedRecord.slice(i, i + block1w);
-    // console.log(i, cutWorkRecord.length, cutWorkRecord)
-    let isRestSmallerThan77h = isRestHoursSmallerThan(
-      restHoursInWeek,
-      cutWorkRecord
-    );
+
+    let isRestSmallerThan77h = isRestHoursSmallerThan(restHoursInWeek,cutWorkRecord);
     if (isRestSmallerThan77h) {
-      // console.log(i)
-      // console.log(cutWorkRecord)
-      // console.log(restHoursInWeek * 2)
       return replaceWith2(input.timeBar, input.startIndex, input.endIndex);
     }
   }
