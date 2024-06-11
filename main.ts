@@ -21,38 +21,74 @@ interface Rule {
 }
 
 const sD: SelectedDate = {
-  selectedDate: "20240103",
-  timeBar: '1'.repeat(29) + '0'.repeat(20) , // "000000000000111111111111111100000000000000000000", // "000000000001111111111111001111111111110011110000",
+  selectedDate: "20240107",
+  timeBar: '1'.repeat(48),
   startIndex: 21,
   endIndex: 24,
 };
 
 const wrks: WorkRecord[] = [
   {
+    workDate: "20240101",
+    workRecordValue: '0'.repeat(48)
+  },
+  {
     workDate: "20240102",
-    workRecordValue: '0'.repeat(48) // "000000000000001111111111001111111111110011110000",
+    workRecordValue: '1'.repeat(48)
   },
   {
     workDate: "20240104",
-    workRecordValue: '0'.repeat(48) // "000000000000001111111111001111111111110011110000",
+    workRecordValue: '0'.repeat(48)
   },
-  // {
-  //   workDate: "20240105",
-  //   workRecordValue: '1'.repeat(48) // "000000000000001111111111001111111111110011110000",
-  // },
-  // {
-  //   workDate: "20240106",
-  //   workRecordValue: '1'.repeat(48) // "000000000000001111111111001111111111110011110000",
-  // },
-  // {
-  //   workDate: "20240107",
-  //   workRecordValue: '0'.repeat(48) // "000000000000001111111111001111111111110011110000",
-  // },
+  {
+    workDate: "20240105",
+    workRecordValue: '1'.repeat(48)
+  },
+  {
+    workDate: "20240106",
+    workRecordValue: '0'.repeat(48)
+  },
+  {
+    workDate: "20240107",
+    workRecordValue: '0'.repeat(48)
+  },
+  {
+    workDate: "20240108",
+    workRecordValue: '0'.repeat(48)
+  },
+  {
+    workDate: "20240109",
+    workRecordValue: '0'.repeat(48)
+  },
+  {
+    workDate: "20240110",
+    workRecordValue: '0'.repeat(48)
+  },
+  {
+    workDate: "20240111",
+    workRecordValue: '0'.repeat(48)
+  },
+  {
+    workDate: "20240112",
+    workRecordValue: '0'.repeat(48)
+  },
+  {
+    workDate: "20240113",
+    workRecordValue: '0'.repeat(48)
+  },
+  {
+    workDate: "20240114",
+    workRecordValue: '0'.repeat(48)
+  },
+  {
+    workDate: "20240115",
+    workRecordValue: '0'.repeat(48)
+  },
 ];
 
 // console.log("I01\n", getI01Validation(sD, wrks));
-console.log("I02:", getI02Validation(sD, wrks));
-// console.log("I03\n", getI03Validation(sD, wrks));
+// console.log("I02:", getI02Validation(sD, wrks));
+console.log("I03\n", getI03Validation(sD, wrks));
 // console.log("I04\n", getI04Validation(sD, wrks));
 // console.log("I05\n", getI05Validation(sD, wrks));
 // console.log("I06\n", getI06Validation(sD, wrks));

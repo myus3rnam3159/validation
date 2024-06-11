@@ -438,7 +438,7 @@ export function getI03Validation(
       );
       const subS: string = mergeTB.value.slice(i, subEndI + 1);
 
-      if ((subS.match(/1/g) || []).length >= 144) {
+      if ((subS.match(/1/g) || []).length > 144) {
         violatedRange.start = i;
         violatedRange.end = subEndI;
         break;
