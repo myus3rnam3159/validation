@@ -1,6 +1,40 @@
-import { AffectableIndices, MergedTimeBar, SelectedDate, SurroundingDates, ViolatedRange } from "../dataFormat/DataFormat";
+import { AffectableIndices, MergedTimeBar, SelectedDate, SurroundingDates, ViolatedRange, WorkRecord } from "../dataFormat/DataFormat";
 
 const dayjs = require('dayjs');
+
+/**
+ * Combine work records of previous, current and next day. 
+ * If the date doesn't existed, fill the work record for that date with zero
+ */
+export const completeWorkRecordsIn3Days = (
+    input: SelectedDate,
+    workRecords: WorkRecord[]
+) => {
+    const block24h = 48;
+    var combinedRecord = "";
+
+    const prevAndNextDates = getPreviousAndNextDay(input.selectedDate);
+
+    const dates = [
+        prevAndNextDates.previousDay,
+        input.selectedDate,
+        prevAndNextDates.nextDay,
+    ];
+    for (let date of dates) {
+        let dateIndex = workRecords.findIndex((it) => it.workDate === date);
+        if (date === input.selectedDate) {
+            combinedRecord += input.timeBar;
+            continue;
+        }
+        if (dateIndex < 0) {
+            combinedRecord += "0".repeat(block24h);
+            continue;
+        }
+        combinedRecord += workRecords[dateIndex].workRecordValue;
+    }
+
+    return combinedRecord
+}
 
 /**
  * at least one continuous rest blocks greater or equals than ...
@@ -112,6 +146,14 @@ export function getPreviousAndNextDay(
         previousDay: formatDate(previousDate),
         nextDay: formatDate(nextDate)
     };
+}
+
+export const isTotalWorkBlocksGreaterThan = (
+    blockNumber: number,
+    workRecord: String
+): boolean => {
+    const totalWorkBlocks = workRecord.replace(/0/g, '')
+    return totalWorkBlocks.length > blockNumber
 }
 
 export const isRestHoursSmallerThan = (

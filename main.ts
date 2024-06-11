@@ -22,7 +22,7 @@ interface Rule {
 
 const sD: SelectedDate = {
   selectedDate: "20240103",
-  timeBar: '1'.repeat(20) + '1'.repeat(16) + '0'.repeat(12) , // "000000000000111111111111111100000000000000000000", // "000000000001111111111111001111111111110011110000",
+  timeBar: '1'.repeat(29) + '0'.repeat(20) , // "000000000000111111111111111100000000000000000000", // "000000000001111111111111001111111111110011110000",
   startIndex: 21,
   endIndex: 24,
 };
@@ -30,19 +30,11 @@ const sD: SelectedDate = {
 const wrks: WorkRecord[] = [
   {
     workDate: "20240102",
-    workRecordValue: '1'.repeat(48) // "000000000000001111111111001111111111110011110000",
+    workRecordValue: '0'.repeat(48) // "000000000000001111111111001111111111110011110000",
   },
-  // {
-  //   workDate: "20240102",
-  //   workRecordValue: '0'.repeat(48) // "000000000000001111111111001111111111110011110000",
-  // },
-  // {
-  //   workDate: "20240103",
-  //   workRecordValue: '0'.repeat(48) // "000000000000001111111111001111111111110011110000",
-  // },
   {
     workDate: "20240104",
-    workRecordValue: '1'.repeat(48) // "000000000000001111111111001111111111110011110000",
+    workRecordValue: '0'.repeat(48) // "000000000000001111111111001111111111110011110000",
   },
   // {
   //   workDate: "20240105",
@@ -58,8 +50,8 @@ const wrks: WorkRecord[] = [
   // },
 ];
 
-console.log("I01\n", getI01Validation(sD, wrks));
-// console.log("I02\n", getI02Validation(sD, []));
+// console.log("I01\n", getI01Validation(sD, wrks));
+console.log("I02:", getI02Validation(sD, wrks));
 // console.log("I03\n", getI03Validation(sD, wrks));
 // console.log("I04\n", getI04Validation(sD, wrks));
 // console.log("I05\n", getI05Validation(sD, wrks));
