@@ -2,11 +2,12 @@ import {
   AffectableIndices,
   MergedTimeBar,
   SelectedDate,
-  ViolatedRange,
   SurroundingDates,
+  ViolatedRange,
   WorkRecord,
 } from "../../dataFormat/DataFormat";
 import {
+  atLeastOneContinuousRestBlocksGoeThan,
   editNCIndice,
   getAffectableIndices,
   getDatesInRange,
@@ -122,7 +123,7 @@ export function getI02Validation(
       const subEndI: number = i + 48 - 1;
       const subS: string = mergeTB.value.slice(i, subEndI + 1);
 
-      if ((subS.match(/1/g)|| []).length >= 29) {
+      if ((subS.match(/1/g) || []).length >= 29) {
         violatedRange.start = i;
         violatedRange.end = subEndI;
         break;
@@ -171,12 +172,12 @@ export function getI06Validation(
   );
   let violatedRange: ViolatedRange = { start: -1, end: -1 };
 
-  for (let i = affectedIndices.affectedStartIdx;i <= affectedIndices.affectedEndIdx;i++) {
+  for (let i = affectedIndices.affectedStartIdx; i <= affectedIndices.affectedEndIdx; i++) {
     const subEndI: number = i + 48 - 1;
     const subS: string = mergeTB.value.slice(i, subEndI + 1);
 
     const matcher = subS.match(/0{1,}/g);
-    if ( matcher !== null && matcher.length === 2 && matcher.some((it) => it.length >= 12)) continue;
+    if (matcher !== null && matcher.length <= 2 && matcher.some((it) => it.length >= 12)) continue;
 
     violatedRange.start = i;
     violatedRange.end = subEndI;
@@ -184,7 +185,7 @@ export function getI06Validation(
     i = subEndI - 1;
   }
   const nCIndices: number[] = getNCIndice(violatedRange, selectedRange);
-  
+
   const aftMergeTB: string | null = editNCIndice(nCIndices, mergeTB.value);
   return aftMergeTB != null ? aftMergeTB.slice(mergeTB.recutStart, mergeTB.recutEnd + 1) : null;
 }
@@ -204,7 +205,7 @@ export function getI05Validation(
   const block24h = 48;
   const block1w = 336; // 336 = 48 * 7
   const restHoursInWeek = 77;
-  const totalInputBlocks = input.endIndex - input.startIndex;
+  const totalInputBlocks = input.endIndex - input.startIndex + 1;
 
   var combinedRecord = "";
 
@@ -213,6 +214,8 @@ export function getI05Validation(
   }
 
   let dates = getDatesInRange(input.selectedDate, 7);
+
+  console.log(dates)
 
   for (let date of dates) {
     let dateIndex = workRecords.findIndex((it) => it.workDate === date);
@@ -230,7 +233,7 @@ export function getI05Validation(
   // console.log(combinedRecord)
 
   var start = input.startIndex;
-  var end = combinedRecord.length - block24h - totalInputBlocks;
+  var end = combinedRecord.length - block1w - totalInputBlocks;
 
   if (start < 0) {
     start = 0;
@@ -245,11 +248,15 @@ export function getI05Validation(
   for (let i = start; i < end; ++i) {
     // console.log(i, i + block1w)
     let cutWorkRecord = combinedRecord.slice(i, i + block1w);
+    console.log(i, cutWorkRecord.length, cutWorkRecord)
     let isRestSmallerThan77h = isRestHoursSmallerThan(
       restHoursInWeek,
       cutWorkRecord
     );
     if (isRestSmallerThan77h) {
+      console.log(i)
+      console.log(cutWorkRecord)
+      console.log(restHoursInWeek * 2)
       return replaceWith2(input.timeBar, input.startIndex, input.endIndex);
     }
   }
@@ -271,13 +278,9 @@ export function getI04Validation(
 ): string | null {
   const block24h = 48;
   const restHoursInDay = 10;
-  const totalInputBlocks = input.endIndex - input.startIndex;
+  const totalInputBlocks = input.endIndex - input.startIndex + 1;
 
   var combinedRecord = "";
-
-  if (totalInputBlocks <= 0) {
-    throw Error("start block must smaller than end block");
-  }
 
   const prevAndNextDates = getPreviousAndNextDay(input.selectedDate);
 
@@ -305,8 +308,8 @@ export function getI04Validation(
   if (start < 0) {
     start = 0;
   }
-  if (end >= combinedRecord.length) {
-    end = combinedRecord.length;
+  if (end >= combinedRecord.length - 1) {
+    end = combinedRecord.length - 1;
   }
 
   // console.log(start, end)
@@ -326,63 +329,63 @@ export function getI04Validation(
   return null;
 }
 
-export function getI01Validation(
-  selectedDate: SelectedDate,
-  workRecords: WorkRecord[]
-): string | null {
-  const checkDates: SurroundingDates = getSurroundingDates(
-    selectedDate.selectedDate,
-    workRecords.map((wr) => wr.workDate),
-    1
-  );
+// export function getI01Validation(
+//   selectedDate: SelectedDate,
+//   workRecords: WorkRecord[]
+// ): string | null {
+//   const checkDates: SurroundingDates = getSurroundingDates(
+//     selectedDate.selectedDate,
+//     workRecords.map((wr) => wr.workDate),
+//     1
+//   );
 
-  const leftMergedTimebar: string = getSurroundTimebar(
-    checkDates.prevDates,
-    workRecords.map((wr) => wr.workDate),
-    workRecords.map((wr) => wr.workRecordValue)
-  );
+//   const leftMergedTimebar: string = getSurroundTimebar(
+//     checkDates.prevDates,
+//     workRecords.map((wr) => wr.workDate),
+//     workRecords.map((wr) => wr.workRecordValue)
+//   );
 
-  const rightMergedTimebar: string = getSurroundTimebar(
-    checkDates.nextDates,
-    workRecords.map((wr) => wr.workDate),
-    workRecords.map((wr) => wr.workRecordValue)
-  );
+//   const rightMergedTimebar: string = getSurroundTimebar(
+//     checkDates.nextDates,
+//     workRecords.map((wr) => wr.workDate),
+//     workRecords.map((wr) => wr.workRecordValue)
+//   );
 
-  const mergeTB: MergedTimeBar = mergeTimeBars(
-    selectedDate,
-    leftMergedTimebar,
-    rightMergedTimebar
-  );
-  const affectedIndices: AffectableIndices = getAffectableIndices(mergeTB, 48);
+//   const mergeTB: MergedTimeBar = mergeTimeBars(
+//     selectedDate,
+//     leftMergedTimebar,
+//     rightMergedTimebar
+//   );
+//   const affectedIndices: AffectableIndices = getAffectableIndices(mergeTB, 48);
 
-  const selectedRange: number[] = getSelectedRange(
-    mergeTB.startSelIdx,
-    mergeTB.endSelIdx
-  );
-  let violatedRange: ViolatedRange = { start: -1, end: -1 };
+//   const selectedRange: number[] = getSelectedRange(
+//     mergeTB.startSelIdx,
+//     mergeTB.endSelIdx
+//   );
+//   let violatedRange: ViolatedRange = { start: -1, end: -1 };
 
-  for (
-    let i = affectedIndices.affectedStartIdx;
-    i <= affectedIndices.affectedEndIdx;
-    i++
-  ) {
-    if (mergeTB.value[i] === "1") {
-      const subEndI: number = i + 48 - 1;
-      const subS: string = mergeTB.value.slice(i, subEndI + 1);
+//   for (
+//     let i = affectedIndices.affectedStartIdx;
+//     i <= affectedIndices.affectedEndIdx;
+//     i++
+//   ) {
+//     if (mergeTB.value[i] === "1") {
+//       const subEndI: number = i + 48 - 1;
+//       const subS: string = mergeTB.value.slice(i, subEndI + 1);
 
-      if (subS.match(/0{12,}/g) === null) {
-        violatedRange.start = i;
-        violatedRange.end = subEndI;
-        break;
-      }
-      i = subEndI - 1;
-    }
-  }
-  const nCIndices: number[] = getNCIndice(violatedRange, selectedRange);
+//       if (subS.match(/0{12,}/g) === null) {
+//         violatedRange.start = i;
+//         violatedRange.end = subEndI;
+//         break;
+//       }
+//       i = subEndI - 1;
+//     }
+//   }
+//   const nCIndices: number[] = getNCIndice(violatedRange, selectedRange);
 
-  const aftMergeTB: string | null = editNCIndice(nCIndices, mergeTB.value);
-  return aftMergeTB != null ? aftMergeTB.slice(mergeTB.recutStart, mergeTB.recutEnd + 1) : null;
-}
+//   const aftMergeTB: string | null = editNCIndice(nCIndices, mergeTB.value);
+//   return aftMergeTB != null ? aftMergeTB.slice(mergeTB.recutStart, mergeTB.recutEnd + 1) : null;
+// }
 
 export function getI03Validation(
   selectedDate: SelectedDate,
@@ -443,4 +446,51 @@ export function getI03Validation(
 
   const aftMergeTB: string | null = editNCIndice(nCIndices, mergeTB.value);
   return aftMergeTB != null ? aftMergeTB.slice(mergeTB.recutStart, mergeTB.recutEnd + 1) : null;
+}
+
+export function getI01Validation(
+  input: SelectedDate,
+  workRecords: WorkRecord[]
+): string | null {
+
+  const block24h = 48;
+  const continuousRestBlocksInDay = 12;
+  const prevAndNextDates = getPreviousAndNextDay(input.selectedDate);
+
+  var combinedRecord = "";
+
+  const dates = [
+    prevAndNextDates.previousDay,
+    input.selectedDate,
+    prevAndNextDates.nextDay,
+  ];
+
+  for (let date of dates) {
+    let dateIndex = workRecords.findIndex((it) => it.workDate === date);
+    if (date === input.selectedDate) {
+      combinedRecord += input.timeBar;
+      continue;
+    }
+    if (dateIndex < 0) {
+      combinedRecord += "0".repeat(block24h);
+      continue;
+    }
+    combinedRecord += workRecords[dateIndex].workRecordValue;
+  }
+
+  const startOfLoop = input.startIndex + 1;
+  const endOfLoop = input.endIndex + block24h - 1;
+
+  for (let i = startOfLoop; i <= endOfLoop; ++i) {
+    let cutWorkRecord = combinedRecord.slice(i, i + block24h);
+    let isContinuousRestHourGoeThan6 = atLeastOneContinuousRestBlocksGoeThan(
+      continuousRestBlocksInDay,
+      cutWorkRecord
+    )
+    if (isContinuousRestHourGoeThan6) {
+      return null
+    }
+  }
+
+  return replaceWith2(input.timeBar, input.startIndex, input.endIndex + 1);
 }

@@ -1,6 +1,58 @@
-import { AffectableIndices, MergedTimeBar, SelectedDate, SurroundingDates, ViolatedRange} from "../dataFormat/DataFormat";
+import { AffectableIndices, MergedTimeBar, SelectedDate, SurroundingDates, ViolatedRange } from "../dataFormat/DataFormat";
 
 const dayjs = require('dayjs');
+
+/**
+ * at least one continuous rest blocks greater or equals than ...
+ * @param blockNumber number of work rest hour block, for example, 6h = 12 blocks
+ * @param workRecord work record value in timebar
+ * @returns {boolean}
+ */
+export const atLeastOneContinuousRestBlocksGoeThan = (
+    blockNumber: number,
+    workRecord: string
+) => {
+    const restSections = workRecord.replaceAll(/1+/g, '1').split('1').filter(it => it !== '');
+
+    for (let section of restSections) {
+        if (section.length >= blockNumber) {
+            return true
+        }
+    }
+    return false
+}
+
+export const findWeek = (date: String) => {
+    const currentDate = dayjs(date, 'YYYYMMDD')
+    // Get the start of the week (Sunday)
+    const startOfWeek = currentDate.startOf('week').format('YYYYMMDD');
+    // Get the end of the week (Saturday)
+    const endOfWeek = currentDate.endOf('week').format('YYYYMMDD');
+
+    return {
+        startOfWeek, endOfWeek
+    }
+}
+
+export const isWorkHoursGreaterThan = (hour: number, workRecord: string): boolean => {
+    const totalRestBlocks = workRecord.replace(/0/g, '')
+    return totalRestBlocks.length < hour * 2
+}
+
+export const getDatesBetween = (start: string, end: string): string[] => {
+    const startDay = dayjs(start, 'YYYYMMDD');
+    const endDay = dayjs(end, 'YYYYMMDD');
+
+    let dates: string[] = [];
+    let currentDay = startDay;
+
+    while (currentDay.isBefore(endDay) || currentDay.isSame(endDay)) {
+        dates.push(currentDay.format('YYYYMMDD'));
+        currentDay = currentDay.add(1, 'day');
+    }
+
+    return dates;
+}
 
 export function dateToYmd(date: Date): string {
     return dayjs(date).format('YYYYMMDD')
@@ -86,9 +138,9 @@ export function replaceWith2(
     return beforeRange + "2".repeat(end - start) + afterRange;
 }
 
-export function getSurroundingDates(targetDate: string, dates: string[] , getSize: number): SurroundingDates{
-    if(dates.indexOf(targetDate) === -1) dates.push(targetDate);
-    
+export function getSurroundingDates(targetDate: string, dates: string[], getSize: number): SurroundingDates {
+    if (dates.indexOf(targetDate) === -1) dates.push(targetDate);
+
     dates.sort((a, b) => a.localeCompare(b));
     const targetIndex = dates.indexOf(targetDate);
 
@@ -101,13 +153,13 @@ export function getSurroundingDates(targetDate: string, dates: string[] , getSiz
     }
 }
 
-export function getSurroundTimebar(dateRange: string[], wd: string[], wVal: string[]): string{
+export function getSurroundTimebar(dateRange: string[], wd: string[], wVal: string[]): string {
     let mergedTimebar: string = "";
 
-    for(let d of dateRange){
+    for (let d of dateRange) {
         const index = wd.indexOf(d);
-        
-        if(index !== -1){
+
+        if (index !== -1) {
             mergedTimebar += wVal[index];
         }
     }
@@ -115,7 +167,7 @@ export function getSurroundTimebar(dateRange: string[], wd: string[], wVal: stri
     return mergedTimebar;
 }
 
-export function mergeTimeBars(sd: SelectedDate, leftTB: string, rightTB: string): MergedTimeBar{
+export function mergeTimeBars(sd: SelectedDate, leftTB: string, rightTB: string): MergedTimeBar {
     return {
         startSelIdx: sd.startIndex + leftTB.length,
         endSelIdx: sd.endIndex + leftTB.length,
@@ -125,14 +177,14 @@ export function mergeTimeBars(sd: SelectedDate, leftTB: string, rightTB: string)
     }
 }
 
-export function getAffectableIndices(mTB: MergedTimeBar, cutSize: number): AffectableIndices{
-   return {
+export function getAffectableIndices(mTB: MergedTimeBar, cutSize: number): AffectableIndices {
+    return {
         affectedStartIdx: Math.max(0, mTB.startSelIdx - cutSize),
         affectedEndIdx: Math.min(mTB.value.length - 1, mTB.endSelIdx + cutSize)
-   }
+    }
 }
 
-export function getSelectedRange(start: number, end: number): number[]{
+export function getSelectedRange(start: number, end: number): number[] {
     const range = [];
     for (let i = start; i <= end; i++) {
         range.push(i);
@@ -140,23 +192,23 @@ export function getSelectedRange(start: number, end: number): number[]{
     return range;
 }
 
-export function getNCIndice(vr: ViolatedRange, seletedRange: number[]): number[]{
-    if(vr.start === -1 || vr.end === -1) return [];
+export function getNCIndice(vr: ViolatedRange, seletedRange: number[]): number[] {
+    if (vr.start === -1 || vr.end === -1) return [];
 
     const nCIndices = [];
-    for(let i = vr.start; i <= vr.end; i++){
-        if(seletedRange.indexOf(i) !== -1){
+    for (let i = vr.start; i <= vr.end; i++) {
+        if (seletedRange.indexOf(i) !== -1) {
             nCIndices.push(i);
         }
     }
     return nCIndices;
 }
 
-export function editNCIndice(nCI: number[], timBr: string): string | null{
-    if(nCI.length === 0) return null;
+export function editNCIndice(nCI: number[], timBr: string): string | null {
+    if (nCI.length === 0) return null;
 
     let charArr = timBr.split('');
-    for(let i of nCI){
+    for (let i of nCI) {
         charArr[i] = '2';
     }
 
