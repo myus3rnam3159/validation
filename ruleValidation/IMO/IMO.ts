@@ -282,49 +282,15 @@ export function getI04Validation(
 ): string | null {
   const block24h = 48;
   const restHoursInDay = 10;
-  const totalInputBlocks = input.endIndex - input.startIndex + 1;
 
-  var combinedRecord = "";
+  const combinedRecord = completeWorkRecordsIn3Days(input, workRecords)
 
-  const prevAndNextDates = getPreviousAndNextDay(input.selectedDate);
+  var startOfLoop = input.startIndex + 1;
+  var endOfLoop = input.endIndex + block24h - 1;
 
-  const dates = [
-    prevAndNextDates.previousDay,
-    input.selectedDate,
-    prevAndNextDates.nextDay,
-  ];
-
-  for (let date of dates) {
-    let dateIndex = workRecords.findIndex((it) => it.workDate === date);
-    if (date === input.selectedDate) {
-      combinedRecord += input.timeBar;
-      continue;
-    }
-    if (dateIndex < 0) {
-      combinedRecord += "0".repeat(block24h);
-      continue;
-    }
-    combinedRecord += workRecords[dateIndex].workRecordValue;
-  }
-
-  var start = input.startIndex;
-  var end = combinedRecord.length - block24h - totalInputBlocks;
-  if (start < 0) {
-    start = 0;
-  }
-  if (end >= combinedRecord.length - 1) {
-    end = combinedRecord.length - 1;
-  }
-
-  // console.log(start, end)
-  // console.log(combinedRecord)
-
-  for (let i = start; i < end; ++i) {
+  for (let i = startOfLoop; i <= endOfLoop; ++i) {
     let cutWorkRecord = combinedRecord.slice(i, i + block24h);
-    let isRestSmallerThan10 = isRestHoursSmallerThan(
-      restHoursInDay,
-      cutWorkRecord
-    );
+    let isRestSmallerThan10 = isRestHoursSmallerThan(restHoursInDay, cutWorkRecord);
     if (isRestSmallerThan10) {
       return replaceWith2(input.timeBar, input.startIndex, input.endIndex);
     }

@@ -22,7 +22,7 @@ interface Rule {
 
 const sD: SelectedDate = {
   selectedDate: "20240107",
-  timeBar: '1'.repeat(48),
+  timeBar: '1'.repeat(21) + '0'.repeat(27),
   startIndex: 21,
   endIndex: 24,
 };
@@ -88,8 +88,8 @@ const wrks: WorkRecord[] = [
 
 // console.log("I01\n", getI01Validation(sD, wrks));
 // console.log("I02:", getI02Validation(sD, wrks));
-console.log("I03\n", getI03Validation(sD, wrks));
-// console.log("I04\n", getI04Validation(sD, wrks));
+// console.log("I03\n", getI03Validation(sD, wrks));
+console.log("I04\n", getI04Validation(sD, wrks));
 // console.log("I05\n", getI05Validation(sD, wrks));
 // console.log("I06\n", getI06Validation(sD, wrks));
 // console.log("I07\n", getI07Validation(sD, wrks));
